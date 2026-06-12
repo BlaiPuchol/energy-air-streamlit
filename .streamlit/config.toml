@@ -1,0 +1,13 @@
+[theme]
+primaryColor = "#2c7fb8"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f0f4f8"
+textColor = "#1c2833"
+font = "sans serif"
+
+[server]
+# Evita recargas innecesarias mientras se navega.
+runOnSave = false
+
+[browser]
+gatherUsageStats = false

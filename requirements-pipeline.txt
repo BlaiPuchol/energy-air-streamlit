@@ -1,0 +1,10 @@
+# Dependencias ADICIONALES para reproducir los datos con el pipeline (scripts/),
+# además de las de requirements.txt. NO hacen falta para ejecutar la web: la app
+# solo lee data/app/, que ya está incluido.
+-r requirements.txt
+entsoe-py            # 01_download_entsoe (requiere ENTSOE_API_KEY)
+geopandas            # 04_download_geo, 02c_process_eea_raster, 08_build_app_data
+rasterio>=1.3        # 02c_process_eea_raster (ráster PM2.5 1 km)
+rasterstats>=0.19    # 02c_process_eea_raster (estadísticas zonales por país)
+pyproj               # 02c_process_eea_raster (reproyección EPSG:3035 → 3857)
+matplotlib           # 02c_process_eea_raster (PNG de previsualización del ráster)

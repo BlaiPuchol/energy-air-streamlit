@@ -1,0 +1,17 @@
+# Secretos y entorno
+.env
+.streamlit/secrets.toml
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+app/__pycache__/
+
+# Datos crudos e intermedios que genera el pipeline (pesados; se regeneran con
+# scripts/). data/app/ SÍ se versiona: es lo único que necesita la web.
+data/raw/
+data/processed/
+data/geo/
+data/interpolated/

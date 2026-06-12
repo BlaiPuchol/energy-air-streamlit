@@ -1,0 +1,17 @@
+# Dependencias de EJECUCIÓN de la app de Streamlit (las que instala Streamlit Cloud).
+# La app solo lee los ficheros ligeros de data/app/, así que NO necesita
+# geopandas/rasterio/GDAL. Para regenerar esos datos o el informe LaTeX, instala
+# además requirements-pipeline.txt.
+streamlit>=1.36
+pandas>=2.0
+numpy
+pyarrow
+plotly>=6.0
+folium>=0.17
+streamlit-folium
+branca>=0.7
+requests
+python-dotenv
+Pillow>=10.0
+# Opcional: respaldo de datos en vivo vía ENTSO-E (si se define ENTSOE_API_KEY).
+entsoe-py
