@@ -27,13 +27,19 @@ st.markdown(
 
 st.markdown(
     """
-Esta aplicación cruza **tres fuentes de datos georreferenciadas** (26 países, 2019–2024)
-para explorar la relación entre cómo se produce la electricidad y la calidad del aire:
+Esta aplicación cruza **datos históricos** (26 países, 2019–2024) con **datos en tiempo real**
+para explorar la relación entre cómo se produce la electricidad y la calidad del aire.
 
-- **Generación eléctrica horaria** por tipo de fuente — *ENTSO-E Transparency Platform*
-- **Precios día-anterior** del mercado mayorista — *ENTSO-E*
+**Datos históricos** (descargados y preagregados; la web los lee de ficheros, sin llamar a APIs):
+
+- **Generación eléctrica horaria** por tipo de fuente y **precios** día-anterior — *ENTSO-E Transparency Platform*
 - **PM2.5** interpolada a 1 km e **inventario sectorial de emisiones** — *Agencia Europea de Medio Ambiente (EEA)*
-- **Generación en tiempo real** — *API Energy-Charts (Fraunhofer ISE)*
+- **Contornos administrativos NUTS-0** — *Eurostat GISCO*
+
+**Datos en tiempo real** (APIs consultadas en el momento):
+
+- **Generación e intensidad de carbono** ahora mismo — *Energy-Charts / Fraunhofer ISE* (sin clave; ENTSO-E de respaldo)
+- **PM2.5 medida en estaciones** — *OpenAQ*
 """
 )
 
@@ -136,5 +142,6 @@ if not cyl.empty:
 
 st.caption(
     "Proyecto de la asignatura *Visualización de Datos* — MIARFID, Universitat Politècnica "
-    "de València. Autor: Blai Puchol Salort. Datos: ENTSO-E, EEA, Eurostat GISCO, Energy-Charts."
+    "de València. Autor: Blai Puchol Salort. Datos: ENTSO-E, EEA, Eurostat GISCO, "
+    "Energy-Charts (Fraunhofer) y OpenAQ."
 )
