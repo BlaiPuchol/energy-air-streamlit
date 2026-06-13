@@ -4,7 +4,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import pandas as pd
 import streamlit as st
-import plotly.express as px
 
 from app.components import (
     PLOTLY_CONFIG,
@@ -107,18 +106,10 @@ else:
         )
     with colB:
         st.markdown(f"**{range_label}** · datos hasta `{ts:%Y-%m-%d %H:%M}`")
-        ci_series = live_df["carbon_intensity_gco2_kwh"].dropna()
-        if len(ci_series):
-            ci_df = ci_series.rename("gCO₂/kWh").reset_index()
-            ci_df.columns = ["Fecha", "gCO₂/kWh"]
-            fig_ci = px.line(ci_df, x="Fecha", y="gCO₂/kWh",
-                             title="Intensidad de carbono en el periodo")
-            fig_ci.update_traces(line_color="#e74c3c")
-            fig_ci.update_layout(height=300, margin=dict(t=40, b=0))
-            st.plotly_chart(fig_ci, width="stretch", config=PLOTLY_CONFIG)
         st.caption(
             "Intensidad de carbono = emisiones (gCO₂) / energía generada (kWh), "
-            "usando factores de emisión por tipo de fuente (IPCC AR6)."
+            "usando factores de emisión por tipo de fuente (IPCC AR6). "
+            "La evolución detallada y el mapa europeo en vivo están en la página **Tiempo real**."
         )
 
 st.divider()

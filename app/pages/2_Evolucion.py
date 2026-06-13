@@ -11,7 +11,7 @@ import plotly.graph_objects as go
 from app.components import (
     PLOTLY_CONFIG,
     name, country_year, country_month, fuel_mix_month, fuel_mix_wide,
-    hourly_profile, prices_month, pm25, geojson, available_countries,
+    hourly_profile, prices_month, geojson, available_countries,
     fit_europe_map, EUROPE_CENTER, EUROPE_ZOOM, MAP_STYLE, MONTH_NAMES_ES,
 )
 from src.config import FUEL_GROUPS, FUEL_GROUP_COLORS, PM25_YEARS
@@ -106,38 +106,8 @@ st.caption("Pulsa ▶ para ver la evolución. Observa cómo varios países se ac
 
 st.divider()
 
-# 4) Trayectoria animada carbono ↔ PM2.5 
-st.subheader("④ Trayectoria carbono ↔ PM2.5 (animada)")
-cy_all = country_year()[["country", "year", "carbon_intensity_mean",
-                         "renewable_share_mean", "total_generation_gwh"]]
-pm_all = pm25()[["country", "year", "pm25_mean"]]
-sc = cy_all.merge(pm_all, on=["country", "year"], how="inner").dropna(
-    subset=["carbon_intensity_mean", "pm25_mean", "total_generation_gwh"])
-sc["País"] = sc["country"].map(name)
-sc["Renovable %"] = (sc["renewable_share_mean"] * 100).round(0)
-fig_anim = px.scatter(
-    sc.sort_values("year"), x="carbon_intensity_mean", y="pm25_mean",
-    animation_frame="year", animation_group="country",
-    color="Renovable %", color_continuous_scale="RdYlGn", range_color=(0, 100),
-    size="total_generation_gwh", size_max=45, text="País",
-    range_x=[0, sc["carbon_intensity_mean"].max() * 1.05],
-    range_y=[0, sc["pm25_mean"].max() * 1.05],
-    labels={"carbon_intensity_mean": "Intensidad de carbono (gCO₂/kWh)",
-            "pm25_mean": "PM2.5 (µg/m³)"},
-)
-fig_anim.update_traces(textposition="top center", textfont_size=8)
-fig_anim.add_hline(y=5, line_dash="dot", line_color="#2ecc71",
-                   annotation_text="OMS 5 µg/m³", annotation_position="bottom right")
-fig_anim.update_layout(height=560)
-st.plotly_chart(fig_anim, width="stretch", config=PLOTLY_CONFIG)
-st.caption("Pulsa ▶: cada burbuja es un país (tamaño = generación, color = % renovable). "
-           "Lo deseable es desplazarse hacia la esquina inferior izquierda: electricidad "
-           "limpia y aire limpio.")
-
-st.divider()
-
-# 5) Mapa de calor hora × mes (perfil de carbono) 
-st.subheader(f"⑤ Perfil horario de intensidad de carbono — {name(focus)}")
+# 4) Mapa de calor hora × mes (perfil de carbono)
+st.subheader(f"④ Perfil horario de intensidad de carbono — {name(focus)}")
 hp = hourly_profile()
 hp_f = hp[hp["country"] == focus]
 if hp_f.empty:
@@ -162,7 +132,7 @@ else:
 st.divider()
 
 # 6) Precios y volatilidad 
-st.subheader("⑥ Precio mayorista y volatilidad")
+st.subheader("⑤ Precio mayorista y volatilidad")
 pm = prices_month()
 pmask = (pm["country"].isin(selected)) & (pm["year"].between(*yr_range))
 pr = pm[pmask].copy()
