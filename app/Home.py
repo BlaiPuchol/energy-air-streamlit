@@ -114,23 +114,6 @@ else:
 
 st.divider()
 
-# Contexto histórico rápido
-st.subheader("Para situarse: los extremos de 2024")
-cy = country_year()
-latest = int(cy["year"].max())
-cyl = cy[cy["year"] == latest].dropna(subset=["carbon_intensity_mean"])
-if not cyl.empty:
-    cleanest = cyl.nsmallest(1, "carbon_intensity_mean").iloc[0]
-    dirtiest = cyl.nlargest(1, "carbon_intensity_mean").iloc[0]
-    greenest = cyl.nlargest(1, "renewable_share_mean").iloc[0]
-    g1, g2, g3 = st.columns(3)
-    g1.metric(f"Más limpio ({latest})", name(cleanest["country"]),
-              f"{cleanest['carbon_intensity_mean']:.0f} gCO₂/kWh")
-    g2.metric(f"Más intensivo ({latest})", name(dirtiest["country"]),
-              f"{dirtiest['carbon_intensity_mean']:.0f} gCO₂/kWh")
-    g3.metric(f"Más renovable ({latest})", name(greenest["country"]),
-              f"{greenest['renewable_share_mean']*100:.0f} %")
-
 st.caption(
     "Proyecto de la asignatura *Visualización de Datos* — MIARFID, Universitat Politècnica "
     "de València. Autor: Blai Puchol Salort. Datos: ENTSO-E, EEA, Eurostat GISCO, "
