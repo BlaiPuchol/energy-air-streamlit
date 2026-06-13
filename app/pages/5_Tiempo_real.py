@@ -20,23 +20,25 @@ from src.config import FUEL_GROUPS, FUEL_GROUP_COLORS
 st.set_page_config(page_title="Tiempo real", page_icon="📡", layout="wide")
 st.title("Europa en tiempo real")
 st.markdown(
-    "Generación eléctrica de las **últimas 24 horas** (API *Energy-Charts* / Fraunhofer ISE) "
-    "y **PM2.5 medida en tiempo real** (API *OpenAQ*). Los datos se cachean 15 min para no "
-    "saturar los servicios."
+    "Generación eléctrica en vivo (API *Energy-Charts* / Fraunhofer ISE) y **PM2.5 medida "
+    "en tiempo real** (API *OpenAQ*). Los datos se cachean 15 min para no saturar los servicios."
 )
 
 countries = available_countries()
+RANGES = {"Últimas 24 h": 1, "Última semana": 7, "Último mes": 30}
 st.sidebar.header("Controles")
 default = "ES" if "ES" in countries else countries[0]
 country = st.sidebar.selectbox(
     "País", countries, index=countries.index(default), format_func=name)
+range_label = st.sidebar.selectbox("Periodo", list(RANGES.keys()))
+days = RANGES[range_label]
 if st.sidebar.button("Forzar actualización"):
     st.cache_data.clear()
     st.rerun()
 
 # Detalle del país seleccionado
-with st.spinner(f"Consultando generación en vivo de {name(country)}…"):
-    df, source = live_generation(country)
+with st.spinner(f"Consultando generación en vivo de {name(country)} ({range_label.lower()})…"):
+    df, source = live_generation(country, days=days)
 
 badge = {"fraunhofer": "En vivo (Energy-Charts)",
          "entsoe": "En vivo (ENTSO-E)",
@@ -77,12 +79,12 @@ else:
             st.plotly_chart(carbon_gauge(ci_last.iloc[-1]), width="stretch", config=PLOTLY_CONFIG)
     with c2:
         st.plotly_chart(
-            fuel_mix_donut(shares, title=f"Mezcla media 24 h — {name(country)}"),
+            fuel_mix_donut(shares, title=f"Mezcla media ({range_label.lower()}) — {name(country)}"),
             width="stretch", config=PLOTLY_CONFIG,
         )
 
     # Área apilada de la generación en vivo por grupo.
-    st.subheader("Generación por fuente (últimas 24 h)")
+    st.subheader(f"Generación por fuente — {range_label.lower()}")
     groups_present = list(shares.keys())
     melt_rows = []
     for group in groups_present:
@@ -99,9 +101,24 @@ else:
             line=dict(width=0.5, color=FUEL_GROUP_COLORS[group]),
             hovertemplate=f"{group}: %{{y:.0f}} MW<extra></extra>",
         ))
-    fig_area.update_layout(height=400, yaxis_title="MW", hovermode="x unified",
+    fig_area.update_layout(height=380, yaxis_title="MW", hovermode="x unified",
                            legend_title="Fuente", margin=dict(t=20))
     st.plotly_chart(fig_area, width="stretch", config=PLOTLY_CONFIG)
+
+    # Evolución de la intensidad de carbono en el periodo.
+    st.subheader(f"Intensidad de carbono — {range_label.lower()}")
+    if len(ci_last):
+        ci_df = ci_last.rename("gCO₂/kWh").reset_index()
+        ci_df.columns = ["Fecha", "gCO₂/kWh"]
+        fig_ci = px.line(ci_df, x="Fecha", y="gCO₂/kWh",
+                         labels={"Fecha": ""})
+        fig_ci.update_traces(line_color="#e74c3c")
+        fig_ci.update_layout(height=340, hovermode="x unified", margin=dict(t=20))
+        st.plotly_chart(fig_ci, width="stretch", config=PLOTLY_CONFIG)
+        st.caption(
+            "Intensidad de carbono = emisiones (gCO₂) / energía generada (kWh), "
+            "usando factores de emisión por tipo de fuente (IPCC AR6)."
+        )
 
 st.divider()
 
